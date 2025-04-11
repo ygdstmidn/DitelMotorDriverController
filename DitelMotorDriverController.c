@@ -1,23 +1,23 @@
 #include "DitelMotorDriverController/DitelMotorDriverController.h"
 
-int DitelMotorDriverRotate(CAN_HandleTypeDef *hcan, uint8_t _motorDriverAddress, uint8_t _mode, uint16_t speed)
+int DitelMotorDriverRotate(CAN_HandleTypeDef *hcan, uint8_t _motorDriverAddress, uint8_t _mode, uint16_t output)
 {
     static uint8_t lastMode[16]; // 0000～1111
     if (lastMode[_motorDriverAddress] != _mode && lastMode[_motorDriverAddress] != DITEL_MOTOR_NEUTRAL)
     {
         _mode = DITEL_MOTOR_NEUTRAL;
-        speed = 0;
+        output = 0;
     }
     lastMode[_motorDriverAddress] = _mode;
 
     uint8_t canSendData[8] = {};
 
-    if (speed > 50)
-        speed = 50;
+    if (output > DITEL_MOTOR_MAX_OUTPUT)
+        output = DITEL_MOTOR_MAX_OUTPUT;
 
     canSendData[0] = _mode;
-    canSendData[1] = speed >> 8;
-    canSendData[2] = speed & 0x00FF;
+    canSendData[1] = output >> 8;
+    canSendData[2] = output & 0x00FF;
     canSendData[3] = 0;
     canSendData[4] = 0;
     canSendData[5] = 0;
@@ -43,18 +43,18 @@ int DitelMotorDriverRotate(CAN_HandleTypeDef *hcan, uint8_t _motorDriverAddress,
     }
 }
 
-int DitelMotor(CAN_HandleTypeDef *hcan, int motor_address, int speed)
+int DitelMotor(CAN_HandleTypeDef *hcan, int motor_address, int output)
 {
-    speed *= 1;
-    if (speed > 50)
-        speed = 50;
-    if (speed < -50)
-        speed = -50;
+    output *= 1;
+    if (output > DITEL_MOTOR_MAX_OUTPUT)
+        output = DITEL_MOTOR_MAX_OUTPUT;
+    if (output < -DITEL_MOTOR_MAX_OUTPUT)
+        output = -DITEL_MOTOR_MAX_OUTPUT;
 
-    if (speed > 0)
-        return DitelMotorDriverRotate(hcan, motor_address, DITEL_MOTOR_FORWARD, 1 * speed);
-    else if (speed < 0)
-        return DitelMotorDriverRotate(hcan, motor_address, DITEL_MOTOR_REVERSAL, -1 * speed);
+    if (output > 0)
+        return DitelMotorDriverRotate(hcan, motor_address, DITEL_MOTOR_FORWARD, 1 * output);
+    else if (output < 0)
+        return DitelMotorDriverRotate(hcan, motor_address, DITEL_MOTOR_REVERSAL, -1 * output);
     else
         // return DitelMotorDriverRotate(hcan,motor_address, DITEL_MOTOR_BRAKE,DITEL_NONE);
         return DitelMotorDriverRotate(hcan, motor_address, DITEL_MOTOR_NEUTRAL, DITEL_NONE);
