@@ -27,7 +27,7 @@
 int DitelMotorDriverRotate(CAN_HandleTypeDef *hcan, uint8_t _motorDriverAddress, uint8_t _mode, uint16_t output);
 int DitelMotor(CAN_HandleTypeDef *hcan, int motor_address, int output);
 
-int DitelMotorDriverSetPIDGain(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, uint16_t _kp, uint16_t _ki, uint16_t _kd);
+int DitelMotorDriverSetPIDGain(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, uint16_t _kp, uint16_t _ki, uint16_t _kd,int8_t _scale);
 int DitelMotorDriverPIDRotate(CAN_HandleTypeDef *_hcan, uint8_t _motorDriverAddress, uint8_t _mode, uint16_t _speed);
 int DitelMotorPID(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, int _speed);
 int DitelMotorDriverPIDCondition(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, int _condition);

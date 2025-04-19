@@ -62,7 +62,7 @@ int DitelMotor(CAN_HandleTypeDef *hcan, int motor_address, int output)
     return 1;
 }
 
-int DitelMotorDriverSetPIDGain(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, uint16_t _kp, uint16_t _ki, uint16_t _kd)
+int DitelMotorDriverSetPIDGain(CAN_HandleTypeDef *_hcan, int _motorDriverAddress, uint16_t _kp, uint16_t _ki, uint16_t _kd, int8_t _scale)
 {
     if (_kp > DITEL_MOTOR_PID_GAIN_MAX)
     {
@@ -98,7 +98,7 @@ int DitelMotorDriverSetPIDGain(CAN_HandleTypeDef *_hcan, int _motorDriverAddress
     canSendData[4] = (_ki & 0x00FF);
     canSendData[5] = (_kd & 0xFF00) >> 8;
     canSendData[6] = _kd & 0x00FF;
-    canSendData[7] = 0;
+    canSendData[7] = _scale;
 
     if (0 < HAL_CAN_GetTxMailboxesFreeLevel(_hcan))
     {
